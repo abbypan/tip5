@@ -28,6 +28,7 @@ namespace tip5xx {
 const BFieldElement BFieldElement::ZERO = BFieldElement::new_element(0UL);
 const BFieldElement BFieldElement::ONE = BFieldElement::new_element(1UL);
 const BFieldElement BFieldElement::MINUS_TWO_INVERSE = BFieldElement::new_element(0x7FFFFFFF80000000);
+const BFieldElement BFieldElement::MAX = BFieldElement::new_element(P - 1);
 
 // Primitive roots lookup table
 const std::unordered_map<uint64_t, uint64_t> BFieldElement::PRIMITIVE_ROOTS = {
@@ -274,20 +275,7 @@ BFieldElement BFieldElement::operator-() const {
 
 // Stream output operator
 std::ostream& operator<<(std::ostream& os, const BFieldElement& bfe) {
-    uint64_t canonical_value = bfe.value();
-    const uint64_t cutoff = 256;
-
-    if (canonical_value >= BFieldElement::P - cutoff) {
-        os << "-" << (BFieldElement::P - canonical_value);
-    } else if (canonical_value <= cutoff) {
-        os << canonical_value;
-    } else {
-        os.width(20);
-        os.fill('0');
-        os << canonical_value;
-    }
-
-    return os;
+    return os << bfe.to_string();
 }
 
 // Convert from string representation, handling both positive and negative values
@@ -423,20 +411,11 @@ std::string BFieldElement::to_string() const {
 
     if (canonical_value >= BFieldElement::P - cutoff) {
         ss << "-" << (BFieldElement::P - canonical_value);
-    } else if (canonical_value <= cutoff) {
-        ss << canonical_value;
     } else {
-        ss.width(20);
-        ss.fill('0');
         ss << canonical_value;
     }
 
     return ss.str();
 }
-
-// Implement XFieldElement lift
-//XFieldElement BFieldElement::lift() const {
-//    return XFieldElement::new_const(*this);
-//}
 
 } // namespace tip5xx

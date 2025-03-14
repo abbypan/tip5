@@ -40,9 +40,6 @@
 
 namespace tip5xx {
 
-// Forward declarations
-class XFieldElement;
-
 /**
  * Base field element ∈ ℤ_{2^64 - 2^32 + 1}.
  *
@@ -64,7 +61,7 @@ public:
 
     // The base field's prime, i.e., 2^64 - 2^32 + 1
     static constexpr uint64_t P = 0xFFFFFFFF00000001ULL;
-    static constexpr uint64_t MAX = P - 1;
+    static constexpr uint64_t MAX_VALUE = BFieldElement::P-1;
 
     // 2^128 mod P; used for conversion of elements into Montgomery representation
     static constexpr uint64_t R2 = 0xFFFFFFFE00000001ULL;
@@ -75,6 +72,7 @@ public:
     // Constants
     static const BFieldElement ZERO;
     static const BFieldElement ONE;
+    static const BFieldElement MAX;
 
     // Constructors
     BFieldElement() : value_(0) {}
@@ -143,10 +141,8 @@ public:
     static BFieldElement zero() { return ZERO; }
     static BFieldElement one() { return ONE; }
 
-    // Lift to XFieldElement
-    XFieldElement lift() const;
 
-    // Testing utilities
+
     void increment() {
         *this += ONE;
     }
@@ -272,6 +268,22 @@ public:
 
     bool operator!=(const BFieldElement& rhs) const {
         return !(*this == rhs);
+    }
+
+    bool operator<(const BFieldElement& rhs) const {
+        return value() < rhs.value();
+    }
+
+    bool operator<=(const BFieldElement& rhs) const {
+        return value() <= rhs.value();
+    }
+
+    bool operator>(const BFieldElement& rhs) const {
+        return value() > rhs.value();
+    }
+
+    bool operator>=(const BFieldElement& rhs) const {
+        return value() >= rhs.value();
     }
 
     // Convert to string representation
@@ -412,11 +424,11 @@ static BFieldElement bfe_from(T value) {
     return BFieldElement::new_element(static_cast<uint64_t>(value));
 }
 
-static BFieldElement bfe_from(__uint128_t value) {
+[[ maybe_unused ]] static BFieldElement bfe_from(__uint128_t value) {
     return BFieldElement::new_element(BFieldElement::mod_reduce(value)); }
 
 // Constructor for int64_t values
-static BFieldElement bfe_from(int64_t value) {
+[[ maybe_unused ]] static BFieldElement bfe_from(int64_t value) {
     if (value >= 0) {
         // Non-negative case - directly convert to u128
         return bfe_from(static_cast<__uint128_t>(value));
@@ -424,22 +436,6 @@ static BFieldElement bfe_from(int64_t value) {
         // Negative case - subtract R2 from the unsigned value
         // This matches the Rust implementation's handling of negative values
         return bfe_from(static_cast<__uint128_t>(value) - static_cast<__uint128_t>(BFieldElement::R2));
-    }
-}
-
-// Helper functions to make conversions more explicit when needed
-template <typename T>
-T bfe_to(const BFieldElement& bfe) {
-    return bfe.to<T>();
-}
-
-template <typename T>
-bool try_bfe_to(const BFieldElement& bfe, T& output) {
-    try {
-        output = bfe.to<T>();
-        return true;
-    } catch (const BFieldElementError&) {
-        return false;
     }
 }
 

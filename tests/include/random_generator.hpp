@@ -67,7 +67,7 @@ public:
 
     // Generate random BFieldElement
     BFieldElement random_bfe() {
-        std::uniform_int_distribution<uint64_t> dist(0, BFieldElement::MAX);
+        std::uniform_int_distribution<uint64_t> dist(0, BFieldElement::MAX_VALUE);
         return BFieldElement::new_element(dist(rng));
     }
 
