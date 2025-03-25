@@ -5,14 +5,6 @@
 
 Tip5 hash (https://eprint.iacr.org/2023/107) implementation in C++
 
-## Всё просто :)
-
-- BField - целочисленное поле вычетов по модулю
-- BFieldElement - значение в BField
-- Digest - точка в пятимерном линейном пространстве, координаты в котором задаются значениями из BField
-- Tip5.hash_varlen - хэш функция Digest^N --> Digest ( то есть из N штук Digest вычисляется Digest, N > 1 )
-- Tip5.hash_pair - хэш функция Digest x Digest --> Digest ( то есть из двух Digest вычисляется Digest), но при этом не частный случай Tip5.hash_varlen при N = 2
-
 ## Requirements
 
 ### C++ Implementation
@@ -20,7 +12,7 @@ Tip5 hash (https://eprint.iacr.org/2023/107) implementation in C++
 - C++17 compliant compiler
 - For testing: Internet connection (to fetch Google Test and CLI11)
 
-### Rust Implementation
+### Rust Sample
 - Rust 1.85 or higher
 - Internet connection (to fetch dependencies)
 
